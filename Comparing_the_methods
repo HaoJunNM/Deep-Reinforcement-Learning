@@ -1,0 +1,23 @@
+def test_methods(env, num_iterations=100):
+    winner = np.zeros((3,))
+    for g in range(num_iterations):
+        m0_table = naive_sum_reward_agent(env, 500)
+        m1_table = q_learning_with_table(env, 500)
+        m2_table = eps_greedy_q_learning_with_table(env, 500)
+        m0 = run_game(m0_table, env)
+        m1 = run_game(m1_table, env)
+        m2 = run_game(m2_table, env)
+        w = np.argmax(np.array([m0, m1, m2]))
+        winner[w] += 1
+        print("Game {} of {}".format(g + 1, num_iterations))
+    return winner
+    
+def run_game(table, env):
+    s = env.reset()
+    tot_reward = 0
+    done = False
+    while not done:
+        a = np.argmax(table[s, :])
+        s, r, done, _ = env.step(a)
+        tot_reward += r
+    return tot_reward
